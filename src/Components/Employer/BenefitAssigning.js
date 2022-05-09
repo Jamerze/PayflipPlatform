@@ -1,11 +1,14 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-export const EmployerBenefitsPage = () => {
+export const EmployerBenefitsAssigningPage = () => {
+  const urlavailablebenefits = "http://localhost:7000/employer-benefit/country";
   const urlcompanybenefits = "http://localhost:7000/employer-benefit";
   let headers = { Authorization: localStorage.getItem("accessToken") };
   let navigate = useNavigate();
 
+  const [availableBenefitsList, setAvailableBenefitsList] = useState(null);
   const [companyBenefitsList, setCompanyBenefitsList] = useState([]);
 
   useEffect(() => {
@@ -15,45 +18,96 @@ export const EmployerBenefitsPage = () => {
 
   const fetchItems = async () => {
     try {
-      const response = await fetch(urlcompanybenefits, { headers: headers });
-      const companybenefits = await response.json();
+      const response = await fetch(urlavailablebenefits, { headers: headers });
+      const response2 = await fetch(urlcompanybenefits, { headers: headers });
+      const availablebenefits = await response.json();
+      const companybenefits = await response2.json();
 
+      let tempAvailableBenefitList = availablebenefits.data;
       let tempCompanyBenefitList = companybenefits.data;
 
       let companyBenefitsArray = [];
 
-      /* if (tempCompanyBenefitList.length > 0) {
+      if (tempCompanyBenefitList.length > 0) {
         tempCompanyBenefitList[0].benefits.forEach((benefit) => {
           companyBenefitsArray.push(
-            tempAvailableBenefitList.find((benefit2) => benefit === benefit2.id)
+            tempAvailableBenefitList.find((benefit2) => benefit == benefit2.id)
+          );
+          tempAvailableBenefitList.splice(
+            tempAvailableBenefitList.indexOf(
+              tempAvailableBenefitList.find(
+                (benefit2) => benefit == benefit2.id
+              )
+            ),
+            1
           );
         });
-      }*/
+      }
 
       setCompanyBenefitsList(companyBenefitsArray);
+      setAvailableBenefitsList(tempAvailableBenefitList);
     } catch (err) {
       console.log(err);
       console.log("Error while trying to retrieve benefit data.");
     }
   };
 
-  const assignBenefits = async () => {
-    navigate("/employer/benefitAssigning");
-  };
-  const renderAssignButton = async (companyBenefitsList) => {
-    if (companyBenefitsList?.length > 0)
-      return (
-        <button
-          onClick={assignBenefits}
-          type="button"
-          className="btn btn-success"
-        >
-          Assign a package
-        </button>
+  const addBenefit = (id) => {
+    try {
+      companyBenefitsList.push(
+        availableBenefitsList.find((benefit) => benefit.id == id.target.value)
       );
+      setCompanyBenefitsList([...companyBenefitsList]);
+      console.log(companyBenefitsList);
+      availableBenefitsList.splice(
+        availableBenefitsList.indexOf(
+          availableBenefitsList.find((benefit) => benefit.id == id.target.value)
+        ),
+        1
+      );
+      setAvailableBenefitsList([...availableBenefitsList]);
+      console.log(availableBenefitsList);
+    } catch (error) {
+      console.log(error);
+      console.log("Benefit couldn't be added");
+    }
   };
 
-  if (companyBenefitsList?.length !== 0) {
+  const saveBenefits = async () => {
+    const response = await fetch("http://localhost:7000/auth/profile", {
+      headers: headers,
+    });
+    const userprofile = await response.json();
+    console.log(userprofile.data.id);
+    console.log(companyBenefitsList.map((benefit) => benefit.id));
+    axios
+      .post(
+        "http://localhost:7000/employer-benefit",
+        {
+          employer_id: userprofile.data.id,
+          benefits: companyBenefitsList.map((benefit) => benefit.id),
+        },
+        { headers: headers }
+      )
+      .then((res) => {
+        console.log(res);
+        document.getElementById("alertsuccess").hidden = false;
+        setInterval(
+          () => (document.getElementById("alertsuccess").hidden = true),
+          5000
+        );
+        navigate("/employer/benefit");
+      })
+      .catch((err) => {
+        document.getElementById("alertdanger").hidden = false;
+        setInterval(
+          () => (document.getElementById("alertdanger").hidden = true),
+          5000
+        );
+      });
+  };
+
+  if (availableBenefitsList) {
     return (
       <div>
         <div className="g-sidenav-show  bg-gray-100">
@@ -212,6 +266,32 @@ export const EmployerBenefitsPage = () => {
                   later.
                 </div>
                 <div className="d-flex justify-content-between">
+                  <ul className="list-group w-30 p-3">
+                    <a
+                      href="#"
+                      className="list-group-item list-group-item-action active"
+                    >
+                      Available benefits:
+                    </a>
+                    {availableBenefitsList.length > 0 ? (
+                      availableBenefitsList.map((benefit) => {
+                        return (
+                          <button
+                            key={benefit.id}
+                            value={benefit.id}
+                            onClick={addBenefit}
+                            className="list-group-item"
+                          >
+                            {benefit.name}
+                          </button>
+                        );
+                      })
+                    ) : (
+                      <div className="list-group-item list-group-item-action disabled  d-flex justify-content-between align-items-center">
+                        No more benefits to add.
+                      </div>
+                    )}
+                  </ul>
                   <ul
                     className="list-group w-30 p-3"
                     style={{ listStyle: "none" }}
@@ -241,9 +321,21 @@ export const EmployerBenefitsPage = () => {
                     )}
                   </ul>
                 </div>
-
                 <div className="d-flex justify-content-between">
-                  {renderAssignButton(companyBenefitsList)}
+                  <button
+                    onClick={fetchItems}
+                    type="button"
+                    className="btn btn-danger"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveBenefits}
+                    type="button"
+                    className="btn btn-success"
+                  >
+                    Save
+                  </button>
                 </div>
                 <footer className="footer pt-3  ">
                   <div className="container-fluid">
