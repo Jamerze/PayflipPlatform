@@ -16,7 +16,7 @@ export const Login = () => {
     event.preventDefault();
     console.log(email, password);
     axios
-      .post("http://localhost:7000/auth/login", {
+      .post("https://payflipplatform.herokuapp.com/auth/login", {
         email: email.toLowerCase(),
         password: password,
       })
@@ -41,7 +41,7 @@ export const Login = () => {
 
   useEffect(() => {
     document.title = "Payflip - Login";
-    let validateurl = "http://localhost:7000/auth/validate";
+    let validateurl = "https://payflipplatform.herokuapp.com/auth/validate";
     if (localStorage.getItem("accessToken") != null) {
       const fetchItems = async () => {
         try {
