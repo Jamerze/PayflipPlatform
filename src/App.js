@@ -78,6 +78,7 @@ function App() {
       <Route path="login" element={<Login />}></Route>
       <Route path="signup" element={<Signup />}></Route>
       <Route path="admin/dashboard" element={<AdminDash />}></Route>
+      <Route path="admin/employees" element={<AdminEmployeesPage />}></Route>
       <Route path="admin/benefits" element={<AdminBenefits />}></Route>
       <Route path="admin/addBenefit" element={<AdminAddBenefitPage />}></Route>
       <Route
