@@ -99,8 +99,12 @@ function App() {
       ></Route>
       <Route path="employer/dashboard" element={<EmployerDash />}></Route>
       <Route
-        path="employer/benefits"
+        path="employer/benefitAssign"
         element={<EmployerBenefitsAssigningPage />}
+      ></Route>
+      <Route
+        path="employer/benefits"
+        element={<EmployerBenefitsPage />}
       ></Route>
       <Route path="authentication" element={<AuthenticationPage />}></Route>
       <Route path="*" element={<Navigate to="/login" />}></Route>
