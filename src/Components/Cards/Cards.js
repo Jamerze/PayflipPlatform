@@ -16,7 +16,7 @@ export const BenefitCards = () => {
           <Card
             name="Playstation"
             cost="$200"
-            desc="full pack gaming console"
+            desc="full pack gaming consol"
             src="https://i.pinimg.com/originals/86/09/64/860964688d449da06d61c6cc4e9b931a.jpg"
           ></Card>
         </Col>
