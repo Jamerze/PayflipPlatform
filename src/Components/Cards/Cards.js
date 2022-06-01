@@ -13,14 +13,29 @@ export const BenefitCards = () => {
     <Container>
       <Row md={3}>
         <Col>
-          <Card></Card>
+          <Card
+            name="Playstation"
+            cost="$200"
+            desc="full pack gaming console"
+            src="https://i.pinimg.com/originals/86/09/64/860964688d449da06d61c6cc4e9b931a.jpg"
+          ></Card>
         </Col>
         <Col>
           {" "}
-          <Card></Card>
+          <Card
+            name="Iphone x"
+            cost="$100"
+            desc="full pack phone prduct"
+            src="https://media.idownloadblog.com/wp-content/uploads/2017/10/iphone-8-mockup-downloadable.jpg"
+          ></Card>
         </Col>
         <Col>
-          <Card></Card>
+          <Card
+            name="Bike"
+            cost="$50"
+            desc="high quality bike "
+            src="https://static.vecteezy.com/system/resources/previews/000/268/319/non_2x/vector-bicycle-illustration.jpg"
+          ></Card>
         </Col>
       </Row>
       <br></br>
@@ -28,24 +43,20 @@ export const BenefitCards = () => {
   );
 };
 
-const Card = () => {
+const Card = (props) => {
   return (
     <MDBCard
       alignment="center"
-      style={{ maxWidth: "15rem", maxHeight: "21rem" }}
+      style={{ maxWidth: "15rem", maxHeight: "22rem" }}
     >
-      <MDBCardImage
-        src="https://i.pinimg.com/originals/86/09/64/860964688d449da06d61c6cc4e9b931a.jpg"
-        position="top"
-        alt="..."
-      />
+      <MDBCardImage src={props.src} position="top" alt="..." />
       <MDBCardBody>
         <MDBCardTitle>
-          Playstation{" "}
-          {<span style={{ fontSize: 15, color: "green" }}>$200</span>}
+          {props.name + " "}
+          {<span style={{ fontSize: 15, color: "green" }}>{props.cost}</span>}
         </MDBCardTitle>
 
-        <MDBCardText>full pack gaming console</MDBCardText>
+        <MDBCardText>{props.desc}</MDBCardText>
         <button
           type="submit"
           className="btn bg-redpayflip text-white w-80 mt-1 mb-0"
